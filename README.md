@@ -1,5 +1,7 @@
 # 介绍
 
+该系统是dz-shop-vue3的独立经销商端
+
 官方文档地址 [DZ-Shop文档](https://docs.dazhoutech.cn/)
 
 ## 开发技术
