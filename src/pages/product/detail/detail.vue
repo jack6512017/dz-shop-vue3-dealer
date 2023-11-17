@@ -39,8 +39,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed } from 'vue';
-import { onLoad, onPageScroll } from '@dcloudio/uni-app';
+import { ref, reactive, computed, watch } from 'vue';
+import { onLoad, onPageScroll, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app';
 import { useUserStore } from '@/state/modules/user';
 
 const userStore = useUserStore();
@@ -76,6 +76,13 @@ const userInfo = computed(() => {
 
 const serviceType = ref<string>(shopSetting.value.app_service_type);
 
+watch(
+	() => userStore.hasLogin,
+	() => {
+		updateShare();
+	}
+);
+
 onLoad(async (options) => {
 	await uni.$onLaunched;
 	if (wechatMpScene.value != '' && wechatMpScene.value == 1154) {
@@ -97,6 +104,16 @@ onPageScroll((e) => {
 	scrollTop.value = e.scrollTop;
 });
 
+onShareAppMessage(() => {
+	return data.mpShare;
+});
+
+// #ifdef MP-WEIXIN
+onShareTimeline(() => {
+	return data.mpShare;
+});
+// #endif
+
 function pageLoadingClick() {
 	pageLoadingStatus.value = 'loading';
 	getProductDetail();
@@ -117,22 +134,28 @@ async function getProductDetail() {
 			data.productDetail = res.data;
 			uni.setNavigationBarTitle({ title: res.data.name });
 			pageLoadingShow.value = false;
-			//初始化小程序分享
-			data.mpShare.title = shopSetting.value.product_share_title;
-			data.mpShare.path = sharePath();
-			data.mpShare.imageUrl = data.productDetail.covers[0];
-			//初始化APP分享
-			data.shareData = {
-				shareUrl: sharePath(),
-				shareTitle: shopSetting.value.product_share_title,
-				shareContent: data.productDetail.name,
-				shareImg: data.productDetail.covers[0],
-			};
+			// 分享
+			updateShare();
 		})
 		.catch((err) => {
 			pageLoadingShow.value = true;
 			pageLoadingStatus.value = err == '找不到该产品' ? 'invalid' : 'error';
 		});
+}
+
+//更新分享
+function updateShare() {
+	//初始化小程序分享
+	data.mpShare.title = shopSetting.value.product_share_title;
+	data.mpShare.path = sharePath();
+	data.mpShare.imageUrl = data.productDetail.covers[0];
+	//初始化APP分享
+	data.shareData = {
+		shareUrl: sharePath(),
+		shareTitle: shopSetting.value.product_share_title,
+		shareContent: data.productDetail.name,
+		shareImg: data.productDetail.covers[0],
+	};
 }
 
 //分享路径
