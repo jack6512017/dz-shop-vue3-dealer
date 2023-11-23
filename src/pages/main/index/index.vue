@@ -194,7 +194,7 @@
 						<text class="grid-item-text">地址</text>
 					</view>
 				</dz-grid-item>
-				<dz-grid-item customStyle="padding-bottom: 15px" @click="withdrawClick()">
+				<dz-grid-item v-if="parseInt(shopSetting.dealer_brokerage_withdraw_enabled) === 1" customStyle="padding-bottom: 15px" @click="withdrawClick()">
 					<view class="grid-item">
 						<view class="icon-bg">
 							<view><dz-icon name="sponsor" size="50"></dz-icon></view>

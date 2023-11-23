@@ -1,6 +1,6 @@
 {
 	"name": "dz-shop-dealer",
-	"version": "2.9.21",
+	"version": "2.9.29",
 	"scripts": {
 		"dev:app": "uni -p app",
 		"dev:custom": "uni -p",
